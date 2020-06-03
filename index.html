@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <title>Compra/Venda</title>
+  <title>Cadastro</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
@@ -13,7 +13,7 @@
 <body>
 
 <div class="container">
-  <h1>Produtos</h1>
+  <h1>Músicas</h1>
   <form>
   <div class="form-group">
     <label for="carteira">Carteira</label>
@@ -21,18 +21,18 @@
     </select>
   </div>
   <div class="form-group">
-    <label for="nome">Nome:</label>
-    <input type="text" class="form-control" id="nome">
-  </div>
-  <div class="form-group">
-    <label for="descricao">Descrição:</label>
-    <input type="text" class="form-control" id="descricao">
+	<label for="musica">Música:</label>
+	<select id="musica" class="form-control">
+		<option value=1>Música #1</option>
+		<option value=2>Música #2</option>
+		<option value=3>Música #3</option>
+	</select>
   </div>
   <div class="form-group">
     <label for="preco">Preço:</label>
-    <input type="text" class="form-control" id="preco">
+    <input type="number" class="form-control" id="preco">
   </div>
-  <button id="btnAnunciar" class="btn btn-primary">Anunciar</button>
+  <button id="btnDisponibilizar" class="btn btn-primary">Disponibilizar</button>
 </form>
 
 <hr/>
@@ -43,13 +43,13 @@
 
 <script>
 	//instancia o web3
-	if (typeof web3 !== 'undefined') {
-		console.log('Usando MetaMask');
-		web3 = new Web3(web3.currentProvider);
-	} else {
+	//if (typeof web3 !== 'undefined') {
+		////console.log('Usando MetaMask');
+		//web3 = new Web3(web3.currentProvider);
+	//} else {
 		console.log('Usando Ganache');
 		web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
-	}
+	//}
 
 	//define conta padrão
 	web3.eth.defaultAccount = web3.eth.coinbase;
@@ -64,7 +64,7 @@
 				"type": "uint256"
 			}
 		],
-		"name": "buyArticle",
+		"name": "tocaMusica",
 		"outputs": [],
 		"payable": true,
 		"stateMutability": "payable",
@@ -73,7 +73,7 @@
 	{
 		"constant": true,
 		"inputs": [],
-		"name": "getArticlesForSale",
+		"name": "getMusicasDisponiveis",
 		"outputs": [
 			{
 				"name": "",
@@ -87,7 +87,7 @@
 	{
 		"constant": true,
 		"inputs": [],
-		"name": "getNumberOfArticles",
+		"name": "getQuantidadeMusicas",
 		"outputs": [
 			{
 				"name": "",
@@ -106,7 +106,7 @@
 				"type": "uint256"
 			}
 		],
-		"name": "getArticle",
+		"name": "getMusica",
 		"outputs": [
 			{
 				"name": "",
@@ -129,19 +129,15 @@
 		"constant": false,
 		"inputs": [
 			{
-				"name": "_name",
+				"name": "_nomeMusica",
 				"type": "string"
 			},
 			{
-				"name": "_description",
-				"type": "string"
-			},
-			{
-				"name": "_price",
+				"name": "_preco",
 				"type": "uint256"
 			}
 		],
-		"name": "sellArticle",
+		"name": "cadastrarMusica",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
@@ -162,23 +158,19 @@
 				"type": "uint256"
 			},
 			{
-				"name": "seller",
+				"name": "artista",
 				"type": "address"
 			},
 			{
-				"name": "buyer",
+				"name": "plataforma",
 				"type": "address"
 			},
 			{
-				"name": "name",
+				"name": "nomeMusica",
 				"type": "string"
 			},
 			{
-				"name": "description",
-				"type": "string"
-			},
-			{
-				"name": "price",
+				"name": "preco",
 				"type": "uint256"
 			}
 		],
@@ -189,9 +181,9 @@
 ]);
 
 	//aponta para publicado
-	var contract = contractABI.at('0x42185b562a08E68aE2Be86a64aE8a6Df305Db8BA');
+	var contract = contractABI.at('0xe76686990541834b8413810De6D2F6F3030FD480');
 
-	//preenche carteiras para comprar
+	//preenche carteiras do artista
 	var accounts = web3.eth.accounts;
 	var option = '';
 	for (var i=0;i<accounts.length;i++){
@@ -199,19 +191,18 @@
 	}
 	$('#carteira').append(option);
 
-	//ação do botão anunciar
-	$('#btnAnunciar').click(function(){
-		var nome = $('#nome').val();
-		var descricao = $('#descricao').val();
+	//ação do botão Disponibilizar
+	$('#btnDisponibilizar').click(function(){
+		var nomeMusica = $('#musica').val();
 		var preco = $('#preco').val();
-		contract.sellArticle(nome, descricao, web3.toWei(preco, "ether"), $('#carteira').val(), {from: $('#carteira').val(), gas: 3000000});
+		contract.cadastrarMusica(nomeMusica, web3.toWei(preco, "ether"), {from: $('#carteira').val(), gas: 3000000});
 	});
 
-	//mostrando os itens a venda
-	contract.getArticlesForSale(function(error, result){
+	//mostrando as musicas disponíveis
+	contract.getMusicasDisponiveis(function(error, result){
 		if (!error) {
 			$.each(result, function(index, value) {
-	  			contract.getArticle(value, function(error, result){
+	  			contract.getMusica(value, function(error, result){
 					if (!error) {
 						var card = '<div class="card">' + 
 						'  <div class="card-body">' + 
@@ -221,7 +212,7 @@
 						'    <a href="#void" class="card-link" onclick="comprar('+ value +');">Comprar</a>' + 
 						'  </div>' + 
 						'</div>';
-						$('#produtos').append(card);
+						$('#musicas').append(card);
 
 					} else {
 						console.log(error);
@@ -234,9 +225,9 @@
 	});
 
 	function comprar (id) {
-		contract.getArticle(id, function(error, result){
+		contract.getMusica(id, function(error, result){
 			if (!error) {
-				contract.buyArticle(id, {from: $('#carteira').val(), value: result[2], gas: 3000000});
+				contract.tocaMusica(id, {from: $('#carteira').val(), value: result[2], gas: 3000000});
 			} else {
 				console.log(error);
 			}
