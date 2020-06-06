@@ -13,12 +13,20 @@
 <body>
 
 <div class="container">
+	<a href="/index.html" style="float: left;">
+		Voltar para o cadastro de músicas
+	</a>
+	<br/><br/>
 	<h1>Tocar Músicas</h1>
 	<form>
 		<div class="form-group">
-			<label for="carteira">Carteira</label>
+			<label for="carteira">Selecione a carteira da plataforma:</label>
 			<select id="carteira" class="form-control">
 			</select>
+		</div>
+		<div class="alert alert-dismissible" role="alert" id="divAlerta">
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<span id="spanAlerta"></span>
 		</div>
 	</form> 
 <hr/>
@@ -162,7 +170,9 @@
 ]);
 
 	//aponta para publicado
-	var contract = contractABI.at('0x9b01d1db4cc658c80fef5687b543793a3c60196f');
+	var contract = contractABI.at('0xf56a26fef6e3011fbdb26abe1c96858ed7e53aa4');
+
+	$('#divAlerta').hide();
 
 	//preenche carteiras do artista
 	var accounts = web3.eth.accounts;
@@ -171,20 +181,6 @@
 	   option += '<option value="'+ accounts[i] + '">' + accounts[i] + '</option>';
 	}
 	$('#carteira').append(option);
-
-	var musicas = ["Primeira Musica", "Segunda Musica", "Terceira Musica"];
-	var option2 = '';
-	for (var i=0;i<musicas.length;i++){
-	   option2 += '<option value="'+ musicas[i] + '">' + musicas[i] + '</option>';
-	}
-	$('#musica').append(option2);
-
-	//ação do botão Disponibilizar
-	$('#btnDisponibilizar').click(function(){
-		var nomeMusica = $('#musica').val();
-		var preco = $('#preco').val();
-		contract.cadastrarMusica(nomeMusica, web3.toWei(preco, "ether"), {from: $('#carteira').val(), gas: 3000000});
-	});
 
 	//mostrando as musicas disponíveis
 	contract.getMusicasDisponiveis(function(error, result){
@@ -196,7 +192,7 @@
 						'  <div class="card-body">' + 
 						'    <h5 class="card-title">' + result[0] + '</h5>' + 
 						'    <h6 class="card-subtitle mb-2 text-muted">ETH ' + web3.fromWei(result[1], "ether") + '</h6>' + 
-						'    <a href="#void" class="card-link" onclick="tocar('+ value +');">Tocar</a>' + 
+						'    <button type="button" class="btn btn-info" onclick="tocar('+ value +')">Tocar</button>' + 
 						'  </div>' + 
 						'</div>';
 						$('#musicas').append(card);
@@ -214,7 +210,19 @@
 	function tocar (id) {
 		contract.getMusica(id, function(error, result){
 			if (!error) {
-				contract.tocaMusica(id, {from: $('#carteira').val(), value: result[2], gas: 3000000});
+				try{
+					contract.tocaMusica(id, {from: $('#carteira').val(), value: result[1], gas: 3000000});
+					$('#divAlerta').show();
+					$('#divAlerta').removeClass('alert-danger');
+					$('#divAlerta').addClass('alert-success');
+					$('#spanAlerta').text('Transação realizada com sucesso!');
+				}
+				catch(erro){
+					$('#divAlerta').show();
+					$('#divAlerta').removeClass('alert-success');
+					$('#divAlerta').addClass('alert-danger');
+					$('#spanAlerta').text(erro);
+				}
 			} else {
 				console.log(error);
 			}

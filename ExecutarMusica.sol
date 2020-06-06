@@ -33,25 +33,16 @@ contract ExecutarMusica {
     return musicasCount;
   }
 
-  //retorna as músicas ainda disponíveis
+  //retorna as músicas disponíveis
   function getMusicasDisponiveis() public view returns (uint[]) {
     uint[] memory musicaIds = new uint[](musicasCount);
 
     uint numeroMusicasDisponiveis = 0;
     for(uint i = 1; i <= musicasCount; i++) {
-      if(musicas[i].plataforma == 0x0) {//se não tiver pagador
-        musicaIds[numeroMusicasDisponiveis] = musicas[i].id;
-        numeroMusicasDisponiveis++;
-      }
+      musicaIds[numeroMusicasDisponiveis] = musicas[i].id;
+      numeroMusicasDisponiveis++;
     }
-
-    //copia para array de musicas disponiveis
-    uint[] memory disponiveis = new uint[](numeroMusicasDisponiveis);
-    for(uint j = 0; j < numeroMusicasDisponiveis; j++) {
-      disponiveis[j] = musicaIds[j];
-    }
-
-    return disponiveis;
+    return musicaIds;
   }
 
   function getMusica(uint _id) public view returns (string, uint256) {
@@ -71,9 +62,6 @@ contract ExecutarMusica {
     require(_id > 0 && _id <= musicasCount);
 
     Musica storage musica = musicas[_id];
-
-    //não foi tocada ainda
-    //require(musica.plataforma == 0X0, 'Música nunce tocada');
 
     //não pode ser do próprio artista
     require(msg.sender != musica.artista);
