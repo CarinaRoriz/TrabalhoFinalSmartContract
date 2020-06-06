@@ -57,10 +57,9 @@ contract ExecutarMusica {
   function getMusica(uint _id) public view returns (string, uint256) {
     //deve existir
     require(_id > 0 && _id <= musicasCount);
-
+    
     Musica storage musica = musicas[_id];
-
-    return ("Musica legal", _id);
+    return (musica.nomeMusica, musica.preco);
   }
 
   //tocar uma musica

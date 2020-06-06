@@ -22,10 +22,7 @@
   </div>
   <div class="form-group">
 	<label for="musica">Música:</label>
-	<select id="musica" class="form-control">
-		<option value=1>Música #1</option>
-		<option value=2>Música #2</option>
-		<option value=3>Música #3</option>
+	<select id="musica" class="form-control">		
 	</select>
   </div>
   <div class="form-group">
@@ -55,86 +52,7 @@
 	web3.eth.defaultAccount = web3.eth.coinbase;
 
 	//ABI do contrato
-	var contractABI = web3.eth.contract([
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_id",
-				"type": "uint256"
-			}
-		],
-		"name": "tocaMusica",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "getMusicasDisponiveis",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256[]"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "getQuantidadeMusicas",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_id",
-				"type": "uint256"
-			}
-		],
-		"name": "getMusica",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_nomeMusica",
-				"type": "string"
-			},
-			{
-				"name": "_preco",
-				"type": "uint256"
-			}
-		],
-		"name": "cadastrarMusica",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
+	var contractABI = web3.eth.contract([	
 	{
 		"constant": true,
 		"inputs": [
@@ -169,11 +87,94 @@
 		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
-	}
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getQuantidadeMusicas",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_nomeMusica",
+				"type": "string"
+			},
+			{
+				"name": "_preco",
+				"type": "uint256"
+			}
+		],
+		"name": "cadastrarMusica",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_id",
+				"type": "uint256"
+			}
+		],
+		"name": "tocaMusica",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},	
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_id",
+				"type": "uint256"
+			}
+		],
+		"name": "getMusica",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getMusicasDisponiveis",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
 ]);
 
 	//aponta para publicado
-	var contract = contractABI.at('0xf01eb7a5484815a5bf183480c14c7c392a7de02a');
+	var contract = contractABI.at('0x9b01d1db4cc658c80fef5687b543793a3c60196f');
 
 	//preenche carteiras do artista
 	var accounts = web3.eth.accounts;
@@ -182,6 +183,13 @@
 	   option += '<option value="'+ accounts[i] + '">' + accounts[i] + '</option>';
 	}
 	$('#carteira').append(option);
+
+	var musicas = ["Primeira Musica", "Segunda Musica", "Terceira Musica"];
+	var option2 = '';
+	for (var i=0;i<musicas.length;i++){
+	   option2 += '<option value="'+ musicas[i] + '">' + musicas[i] + '</option>';
+	}
+	$('#musica').append(option2);
 
 	//ação do botão Disponibilizar
 	$('#btnDisponibilizar').click(function(){
@@ -200,8 +208,7 @@
 						'  <div class="card-body">' + 
 						'    <h5 class="card-title">' + result[0] + '</h5>' + 
 						'    <h6 class="card-subtitle mb-2 text-muted">ETH ' + web3.fromWei(result[1], "ether") + '</h6>' + 
-						'    <p class="card-text">' + result[1] + '</p>' + 
-						'    <a href="#void" class="card-link" onclick="comprar('+ value +');">Comprar</a>' + 
+						'    <a href="#void" class="card-link" onclick="tocar('+ value +');">Tocar</a>' + 
 						'  </div>' + 
 						'</div>';
 						$('#musicas').append(card);
@@ -216,7 +223,7 @@
 		}
 	});
 
-	function comprar (id) {
+	function tocar (id) {
 		contract.getMusica(id, function(error, result){
 			if (!error) {
 				contract.tocaMusica(id, {from: $('#carteira').val(), value: result[2], gas: 3000000});
