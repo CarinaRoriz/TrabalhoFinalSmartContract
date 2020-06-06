@@ -60,7 +60,7 @@ contract ExecutarMusica {
 
     Musica storage musica = musicas[_id];
 
-    return (musica.nomeMusica, musica.preco);
+    return ("Musica legal", _id);
   }
 
   //tocar uma musica
