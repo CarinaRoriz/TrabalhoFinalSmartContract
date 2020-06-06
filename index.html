@@ -174,7 +174,7 @@
 ]);
 
 	//aponta para publicado
-	var contract = contractABI.at('0x9b01d1db4cc658c80fef5687b543793a3c60196f');
+	var contract = contractABI.at('0xbb59bfa465540aa9a750811eaca7a81a018c7cba');
 
 	//preenche carteiras do artista
 	var accounts = web3.eth.accounts;
@@ -226,7 +226,7 @@
 	function tocar (id) {
 		contract.getMusica(id, function(error, result){
 			if (!error) {
-				contract.tocaMusica(id, {from: $('#carteira').val(), value: result[2], gas: 3000000});
+				contract.tocaMusica(id, {from: $('#carteira').val(), value: result[1], gas: 3000000});
 			} else {
 				console.log(error);
 			}
