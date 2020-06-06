@@ -13,65 +13,63 @@
 <body>
 
 <div class="container">
-  <h1>Tocar Músicas</h1>
-  <form>
-	<div class="form-group">
-		<label for="carteira">Carteira da Plataforma</label>
-		<select id="carteira" class="form-control">
-		</select>
-		<label for="nome">Música:</label>
-		<select id="musicas" class="form-control">
-			<option value='1'>Música #1</option>
-			<option value='2'>Música #2</option>
-			<option value='3'>Música #3</option>
-		</select>
-  </div>
-  <button id="btnTocar" class="btn btn-primary">Tocar</button>
-</form>
-
+	<h1>Tocar Músicas</h1>
+	<form>
+		<div class="form-group">
+			<label for="carteira">Carteira</label>
+			<select id="carteira" class="form-control">
+			</select>
+		</div>
+	</form> 
 <hr/>
-
-<div id="produtos"></div>
+<div id="musicas"></div>
 
 </div>
 
 <script>
 	//instancia o web3
-	if (typeof web3 !== 'undefined') {
-		console.log('Usando MetaMask');
-		web3 = new Web3(web3.currentProvider);
-	} else {
+	//if (typeof web3 !== 'undefined') {
+		////console.log('Usando MetaMask');
+		//web3 = new Web3(web3.currentProvider);
+	//} else {
 		console.log('Usando Ganache');
 		web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
-	}
+	//}
 
 	//define conta padrão
 	web3.eth.defaultAccount = web3.eth.coinbase;
 
 	//ABI do contrato
-	var contractABI = web3.eth.contract([
+	var contractABI = web3.eth.contract([	
 	{
-		"constant": false,
+		"constant": true,
 		"inputs": [
 			{
-				"name": "_id",
+				"name": "",
 				"type": "uint256"
 			}
 		],
-		"name": "playMusic",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "getMusicasDisponiveis",
+		"name": "musicas",
 		"outputs": [
 			{
-				"name": "",
-				"type": "uint256[]"
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"name": "artista",
+				"type": "address"
+			},
+			{
+				"name": "plataforma",
+				"type": "address"
+			},
+			{
+				"name": "nomeMusica",
+				"type": "string"
+			},
+			{
+				"name": "preco",
+				"type": "uint256"
 			}
 		],
 		"payable": false,
@@ -93,6 +91,38 @@
 		"type": "function"
 	},
 	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_nomeMusica",
+				"type": "string"
+			},
+			{
+				"name": "_preco",
+				"type": "uint256"
+			}
+		],
+		"name": "cadastrarMusica",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_id",
+				"type": "uint256"
+			}
+		],
+		"name": "tocaMusica",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},	
+	{
 		"constant": true,
 		"inputs": [
 			{
@@ -108,100 +138,55 @@
 			},
 			{
 				"name": "",
-				"type": "string"
-			},
-			{
-				"name": "",
 				"type": "uint256"
 			}
 		],
 		"payable": false,
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_idMusic",
-				"type": "string"
-			},
-			{
-				"name": "_price",
-				"type": "uint256"
-			}
-		],
-		"name": "cadastrarMusica",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "articles",
+		"inputs": [],
+		"name": "getMusicasDisponiveis",
 		"outputs": [
 			{
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"name": "platform",
-				"type": "address"
-			},
-			{
-				"name": "singer",
-				"type": "address"
-			},
-			{
-				"name": "record",
-				"type": "string"
-			},
-			{
-				"name": "idMusic",
-				"type": "string"
-			},
-			{
-				"name": "price",
-				"type": "uint256"
+				"name": "",
+				"type": "uint256[]"
 			}
 		],
 		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
-	}
+	},
 ]);
 
 	//aponta para publicado
-	var contract = contractABI.at('0x42185b562a08E68aE2Be86a64aE8a6Df305Db8BA');
+	var contract = contractABI.at('0x9b01d1db4cc658c80fef5687b543793a3c60196f');
 
-	//preenche carteiras para comprar
+	//preenche carteiras do artista
 	var accounts = web3.eth.accounts;
 	var option = '';
-	for (var i=0;i<(accounts.length/2);i++){
+	for (var i=5;i<10;i++){
 	   option += '<option value="'+ accounts[i] + '">' + accounts[i] + '</option>';
 	}
-	$('#carteiraSinger').append(option);
+	$('#carteira').append(option);
 
-	for (i;i<accounts.length;i++){
-	   option2 += '<option value="'+ accounts[i] + '">' + accounts[i] + '</option>';
+	var musicas = ["Primeira Musica", "Segunda Musica", "Terceira Musica"];
+	var option2 = '';
+	for (var i=0;i<musicas.length;i++){
+	   option2 += '<option value="'+ musicas[i] + '">' + musicas[i] + '</option>';
 	}
-	$('#carteiraRecord').append(option2);
+	$('#musica').append(option2);
 
-	//ação do botão Tocar
-	$('#btnTocar').click(function(){
-		var idMusic = $('#nome').val();
+	//ação do botão Disponibilizar
+	$('#btnDisponibilizar').click(function(){
+		var nomeMusica = $('#musica').val();
 		var preco = $('#preco').val();
-		contract.cadastrarMusica(nome, descricao, web3.toWei(preco, "ether"), {from: $('#carteira').val(), gas: 3000000});
+		contract.cadastrarMusica(nomeMusica, web3.toWei(preco, "ether"), {from: $('#carteira').val(), gas: 3000000});
 	});
 
-	//mostrando os itens a venda
+	//mostrando as musicas disponíveis
 	contract.getMusicasDisponiveis(function(error, result){
 		if (!error) {
 			$.each(result, function(index, value) {
@@ -210,12 +195,11 @@
 						var card = '<div class="card">' + 
 						'  <div class="card-body">' + 
 						'    <h5 class="card-title">' + result[0] + '</h5>' + 
-						'    <h6 class="card-subtitle mb-2 text-muted">ETH ' + web3.fromWei(result[2], "ether") + '</h6>' + 
-						'    <p class="card-text">' + result[1] + '</p>' + 
-						'    <a href="#void" class="card-link" onclick="comprar('+ value +');">Comprar</a>' + 
+						'    <h6 class="card-subtitle mb-2 text-muted">ETH ' + web3.fromWei(result[1], "ether") + '</h6>' + 
+						'    <a href="#void" class="card-link" onclick="tocar('+ value +');">Tocar</a>' + 
 						'  </div>' + 
 						'</div>';
-						$('#produtos').append(card);
+						$('#musicas').append(card);
 
 					} else {
 						console.log(error);
@@ -227,7 +211,7 @@
 		}
 	});
 
-	function comprar (id) {
+	function tocar (id) {
 		contract.getMusica(id, function(error, result){
 			if (!error) {
 				contract.tocaMusica(id, {from: $('#carteira').val(), value: result[2], gas: 3000000});
