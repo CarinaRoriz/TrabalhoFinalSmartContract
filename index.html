@@ -179,7 +179,7 @@
 	//preenche carteiras do artista
 	var accounts = web3.eth.accounts;
 	var option = '';
-	for (var i=0;i<accounts.length;i++){
+	for (var i=0;i<5;i++){
 	   option += '<option value="'+ accounts[i] + '">' + accounts[i] + '</option>';
 	}
 	$('#carteira').append(option);
