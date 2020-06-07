@@ -1,5 +1,5 @@
 var ganacheUrl = 'http://localhost:7545';
-var contractAddress = '0x3ed65373e241896a835f57c5282626cf7a71c418';
+var contractAddress = '0x393319310e7c33c39ae3119b73f10c4f5d8f7fab';
 var contractArray =    
     [
         {
@@ -194,6 +194,44 @@ var contractArray =
             "payable": false,
             "stateMutability": "view",
             "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "artista",
+                    "type": "address"
+                }
+            ],
+            "name": 'getIdArtista',
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256[]"
+                }
+            ],
+            "payable": false,
+            "stateMutability": 'view',
+            "type": 'function'
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "",
+                    "type": "address"
+                }
+            ],            
+            "name": 'idArtistaList',
+            "outputs": [
+                {
+                    "name": "id",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": 'view',
+            "type": 'function'
         },
         {
             "constant": true,

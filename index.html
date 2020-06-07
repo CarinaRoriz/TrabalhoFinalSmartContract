@@ -96,10 +96,9 @@
 		}
 		$('#carteira').append(option);
 
-		var musicas = ["Primeira Musica", "Segunda Musica", "Terceira Musica", "Quarta Musica"];
 		var option2 = '';
-		for (var i = 0; i < musicas.length; i++) {
-			option2 += '<option value="' + musicas[i] + '">' + musicas[i] + '</option>';
+		for (var i = 1; i <= 10; i++) {
+			option2 += '<option value="Música ' + i + '">Música ' + i + '</option>';
 		}
 		$('#musica').append(option2);
 

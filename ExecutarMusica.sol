@@ -18,8 +18,13 @@ contract ExecutarMusica {
     address plataforma;
   }
 
+  struct Artista {
+    uint id;
+  }
+
   mapping (uint => Musica) public musicas;
   mapping (uint => MusicasPorPlataforma) public musicasPorPlataforma; //armazenar quantidade de execução da musica por plataforma
+  mapping (address => Artista) public idArtistaList;
 
   uint artistaCount;
   uint musicasCount;
@@ -31,12 +36,11 @@ contract ExecutarMusica {
     require(!checkMusicExist(_nomeMusica, msg.sender));
 
     musicasCount++;
-    artistaCount++;
 
     //Inicializa música e contador geral para ela
     musicas[musicasCount] = Musica(
       musicasCount,
-      artistaCount,
+      getIdArtista(msg.sender),
       msg.sender,
       _nomeMusica,
       _preco,
@@ -48,6 +52,20 @@ contract ExecutarMusica {
   //quantidade de músicas anunciadas
   function getQuantidadeMusicas() public view returns (uint) {
     return musicasCount;
+  }
+
+  //busca id interno do artista
+  function getIdArtista(address artista) public view returns (uint) {
+    if(idArtistaList[artista].id>0)
+    {
+      return(idArtistaList[artista].id);
+    } else {
+      artistaCount++;
+      idArtistaList[artista] = Artista(
+        artistaCount
+      );
+      return(artistaCount);
+    }
   }
 
   //retorna as músicas disponíveis
