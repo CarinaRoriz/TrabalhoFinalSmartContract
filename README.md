@@ -45,7 +45,7 @@
 ## Criação do contrato
 **Executar os seguintes comandos:**  
   
-**Nota:** Verificar a correta URL do servidor RPC do Ganache. Caso seja diferente da presente no 4o comando abaixo, deve ser corrigida.  
+**Nota:** Verificar a correta URL do servidor RPC do Ganache. Caso seja diferente da presente no 3o comando abaixo, deve ser corrigida.  
 >node  
   
 >Web3 = require('web3')  
@@ -62,4 +62,4 @@ executarMusicaDeployed.address
 
 **Atualizar o arquivo [script.js](./script.js)**  
   
->Deve-se atualizar a variável "ganacheUrl", caso a URL do servidor RPC do Ganache seja diferente do padrão e, obtendo-se sucesso na execução dos comandos acima, o valor da variável "contractAddress" deve ser atualizado com o endereço que aparece como resultado do último comando.
+>Deve-se atualizar o valor da variável "ganacheUrl", caso a URL do servidor RPC do Ganache seja diferente do padrão e, obtendo-se sucesso na execução dos comandos acima, o valor da variável "contractAddress" deve ser atualizado com o endereço que aparece como resultado do último comando.
