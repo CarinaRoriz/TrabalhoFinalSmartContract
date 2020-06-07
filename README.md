@@ -26,17 +26,17 @@
    
 **Ganache**  
   
-Todas as transações, incluindo a relativa à criação do contrato, podem ser verificadas no Ganache:  
+>Todas as transações, incluindo a relativa à criação do contrato, podem ser verificadas no Ganache:  
   
 ![Ganache](./img/ganache.png)
   
-Assim como o valor em cada carteira, sendo que, por definição da solução, as 5 primeiras pertencem aos artistas e as 5 últimas às plataformas.
+>Assim como o valor em cada carteira, sendo que, por definição da solução, as 5 primeiras pertencem aos artistas e as 5 últimas às plataformas.
 
 ![Ganache](./img/ganache_2.png)  
   
 ## Pré-requisitos
-* [Node.js instalado](https://nodejs.org/en/download/)  
-* [Ganache em execução](https://www.trufflesuite.com/ganache)
+>* [Node.js instalado](https://nodejs.org/en/download/)  
+>* [Ganache em execução](https://www.trufflesuite.com/ganache)
 
 ## Instalação
 >npm init  
@@ -45,8 +45,10 @@ Assim como o valor em cada carteira, sendo que, por definição da solução, as
 ## Criação do contrato
 **Executar os seguintes comandos:**  
   
+**Nota:** Verificar a correta URL do servidor RPC do Ganache. Caso seja diferente da presente no 4o comando abaixo, deve ser corrigida.  
 >node  
-Web3 = require('web3')  
+  
+>Web3 = require('web3')  
 web3 = new Web3(new Web3.providers.HttpProvider("HTTP://127.0.0.1:7545"))  
 solc = require('solc')  
 sourceCode =  fs.readFileSync('ExecutarMusica.sol').toString()  
@@ -57,3 +59,7 @@ byteCode = compiledCode.contracts[':ExecutarMusica'].bytecode
 executarMusicaDeployed = executarMusicaContract.new({data:byteCode, from:web3.eth.accounts[0], gas:4700000})  
 executarMusicaInstance =  executarMusicaContract.at(executarMusicaDeployed.address)  
 executarMusicaDeployed.address  
+
+**Atualizar o arquivo [script.js](./script.js)**  
+  
+>Deve-se atualizar a variável "ganacheUrl", caso a URL do servidor RPC do Ganache seja diferente do padrão e, obtendo-se sucesso na execução dos comandos acima, o valor da variável "contractAddress" deve ser atualizado com o endereço que aparece como resultado do último comando.
