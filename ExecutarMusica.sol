@@ -4,6 +4,7 @@ contract ExecutarMusica {
 
   struct Musica {
     uint id;
+    uint idArtista;
     address artista; //seller
     string nomeMusica;
     uint256 preco;
@@ -20,19 +21,22 @@ contract ExecutarMusica {
   mapping (uint => Musica) public musicas;
   mapping (uint => MusicasPorPlataforma) public musicasPorPlataforma; //armazenar quantidade de execução da musica por plataforma
 
+  uint artistaCount;
   uint musicasCount;
   uint musicasPlataformCount;
 
   //cadastrar música
   function cadastrarMusica(string _nomeMusica, uint256 _preco) public {
     //Verifica se a musica já existe
-    require(!checkMusicExist(_nomeMusica));
+    require(!checkMusicExist(_nomeMusica, msg.sender));
 
     musicasCount++;
+    artistaCount++;
 
     //Inicializa música e contador geral para ela
     musicas[musicasCount] = Musica(
       musicasCount,
+      artistaCount,
       msg.sender,
       _nomeMusica,
       _preco,
@@ -59,23 +63,23 @@ contract ExecutarMusica {
   }
 
   //verifica se a música já existe
-  function checkMusicExist(string musicaNome) public view returns (bool) {
+  function checkMusicExist(string musicaNome, address sender) public view returns (bool) {
     bytes32 nome = keccak256(bytes(musicaNome));
     for(uint i = 1; i <= musicasCount; i++){
       string storage nomeAtual = musicas[i].nomeMusica;
       bytes32 currentName = keccak256(bytes(nomeAtual));
-      if(nome == currentName)
+      if(nome == currentName && sender==musicas[i].artista)
         return true;
     }
     return false;
   }
 
-  function getMusica(uint _id) public view returns (string, uint256, uint) {
+  function getMusica(uint _id) public view returns (string, uint256, uint, uint) {
     //deve existir
     require(_id > 0 && _id <= musicasCount);
 
     Musica storage musica = musicas[_id];
-    return (musica.nomeMusica, musica.preco, musica.contador);
+    return (musica.nomeMusica, musica.preco, musica.contador, musica.idArtista);
   }
 
   //tocar uma musica

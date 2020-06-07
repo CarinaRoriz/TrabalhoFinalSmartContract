@@ -1,5 +1,5 @@
 var ganacheUrl = 'http://localhost:7545';
-var contractAddress = '0x11c55982985adeeba31ec494a490cfe805be34f5';
+var contractAddress = '0x3ed65373e241896a835f57c5282626cf7a71c418';
 var contractArray =    
     [
         {
@@ -64,6 +64,10 @@ var contractArray =
             "outputs": [
                 {
                     "name": "id",
+                    "type": "uint256"
+                },
+                {
+                    "name": "idArtista",
                     "type": "uint256"
                 },
                 {
@@ -181,6 +185,10 @@ var contractArray =
                 {
                     "name": "",
                     "type": "uint256"
+                },
+                {
+                    "name": "",
+                    "type": "uint256"
                 }
             ],
             "payable": false,
@@ -205,27 +213,23 @@ var contractArray =
 function handleMusicData(){
     contract.getMusicasDisponiveis(function(error, result){
 		if (!error) {
-			var musicas = [];
 			$.each(result, function(index, value) {
 	  			contract.getMusica(value, function(error, result){					  
-					if (!error) {
-						if(!musicas.includes(result[0])) {
-                            var card = '<div class="col-3">' +
-                            '  <div class="card">' + 
-							'   <div class="card-body">' + 
-							`    <h5 class="card-title">${result[0]}</h5>` + 
-							`    <h6 class="card-subtitle mb-2 text-muted">ETH${web3.fromWei(result[1], "ether")}</h6>`; 
-							
-								if(result[2]>0)
-									card+= `<span>Tocada ${result[2]} vez${(result[2]>1)?'es':''}</span>`
-								else
-									card+= '<span>Ainda não tocada</span>'
+					if (!error) {						
+                        var card = '<div class="col-3">' +
+                        '  <div class="card">' + 
+                        '   <div class="card-body">' + 
+                        `    <h5 class="card-title">${result[0]}</h5>` + 
+                        `    <h6 class="card-subtitle mb-2 text-muted">ETH ${web3.fromWei(result[1], "ether")}</h6>` +
+                        `    <h6 class="card-subtitle mb-2 text-muted">Artista: #${result[3]}</h6>`; 
+                        
+                            if(result[2]>0)
+                                card+= `<span>Tocada ${result[2]} vez${(result[2]>1)?'es':''}</span>`
+                            else
+                                card+= '<span>Ainda não tocada</span>'
 
-								card+='</div></div></div>';
-								$('#musicas').append(card);
-							
-							musicas.push(result[0]);
-						}
+                            card+='</div></div></div>';
+                            $('#musicas').append(card);
 					} else {
                         showError(error);
 						console.log(error);
@@ -253,7 +257,8 @@ function getAvailableMusics() {//mostrando as musicas disponíveis
                                 '  <div class="card">' + 
                                 '  <div class="card-body">' + 
                                 `    <h5 class="card-title">${result[0]}</h5>` + 
-                                `    <h6 class="card-subtitle mb-2 text-muted">ETH${web3.fromWei(result[1], "ether")}</h6>` + 
+                                `    <h6 class="card-subtitle mb-2 text-muted">ETH ${web3.fromWei(result[1], "ether")}</h6>` + 
+                                `    <h6 class="card-subtitle mb-2 text-muted">Artista: #${result[3]}</h6>` +
                                 `    <button type="button" class="btn btn-info" onclick="play(${value})">Tocar</button><br>`; 
                                 var qtdeTocada = tocada.toNumber();              
                                 if(qtdeTocada>0)

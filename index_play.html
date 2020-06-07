@@ -1,73 +1,96 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <title>Musicas | Play</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-  
-  <script src="./node_modules/web3/dist/web3.js"></script>
-  <script src="./scripts.js"></script>
+	<title>Musicas | Play</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+	<script src="./node_modules/web3/dist/web3.js"></script>
+	<script src="./scripts.js"></script>
 </head>
+
 <body>
-
-<div class="container">
-	<a href="./index.html" style="float: left;">
-		Voltar para o cadastro de músicas
-	</a>
-	<br/><br/>
-	<h1>Tocar Músicas</h1>
-	<form>
-		<div class="form-group">
-			<label for="carteira">Selecione a carteira da plataforma:</label>
-			<select id="carteira" class="form-control" onchange="getAvailableMusics();">
-			</select>
-		</div>
-		<div class="alert alert-dismissible" role="alert" id="divAlerta">
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			<span id="spanAlerta"></span>
-		</div>
-	</form> 
-<hr/>
-<div class="row" id="musicas"></div>
-
-</div>
-
-<script>
-	//instancia o web3
-	//if (typeof web3 !== 'undefined') {
+	<div class="container">
+		<div class="row">
+			<a href="./index.html" style="float: right;">
+				Voltar para cadastro
+			</a>
+		</div>	
+		<h1>Execução de Músicas</h1>			
+		<form>
+			<div class="row">
+				<div class="col-3">
+					<div class="form-group">
+						<label for="carteira">Selecione a plataforma:</label>
+						<select id="carteira" class="form-control" onchange="getAvailableMusics();">
+						</select>
+					</div>
+				</div>
+				<div class="col-5">
+					<div class="form-group">
+						<label for="address">Carteira:</label>
+						<input type="text" disabled id="address" class="form-control">
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-6">
+					<div class="alert alert-dismissible" role="alert" id="divAlerta">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span></button>
+						<span id="spanAlerta"></span>
+					</div>
+				</div>
+			</div>
+		</form>
+		<hr />
+		<div class="row" id="musicas"></div>
+	</div>
+	
+	<script>
+		//instancia o web3
+		//if (typeof web3 !== 'undefined') {
 		////console.log('Usando MetaMask');
 		//web3 = new Web3(web3.currentProvider);
-	//} else {
+		//} else {
 		console.log('Usando Ganache');
 		web3 = new Web3(new Web3.providers.HttpProvider(ganacheUrl));
-	//}
+		//}
 
-	//define conta padrão
-	web3.eth.defaultAccount = web3.eth.coinbase;
+		//define conta padrão
+		web3.eth.defaultAccount = web3.eth.coinbase;
 
-	//ABI do contrato
-	var contractABI = web3.eth.contract(contractArray);
+		//ABI do contrato
+		var contractABI = web3.eth.contract(contractArray);
 
-	//aponta para publicado
-	var contract = contractABI.at(contractAddress);
+		//aponta para publicado
+		var contract = contractABI.at(contractAddress);
 
-	$('#divAlerta').hide();
+		$('#divAlerta').hide();
 
-	//preenche carteiras do artista
-	var accounts = web3.eth.accounts;
-	var option = '';
-	for (var i=5;i<10;i++){
-	   option += '<option value="'+ accounts[i] + '">' + accounts[i] + '</option>';
-	}
-	$('#carteira').append(option);
+		//preenche carteiras do artista
+		var accounts = web3.eth.accounts;
+		var option = '';
+		for (var i = 5; i < 10; i++) {
+			option += '<option value="' + accounts[i] + '">Plataforma ' + (i-4) + '</option>';
+		}
+		$('#carteira').append(option);
 
-	//mostrando as musicas disponíveis
-	getAvailableMusics();	
+		$('#carteira').change(function () {
+			$('#address').val($('#carteira').val());
+		})
+		$('#address').val($('#carteira').val());
 
-</script>
+
+		//mostrando as musicas disponíveis
+		getAvailableMusics();
+
+	</script>
 
 </body>
+
 </html>
