@@ -5,27 +5,40 @@ contract ExecutarMusica {
   struct Musica {
     uint id;
     address artista; //seller
-    address plataforma; //buyer
     string nomeMusica;
     uint256 preco;
-    //mapping (address => int) execucoesPlataforma; //armazenar quantidade de execução da musica por plataforma
+    uint contador;
+  }
+
+  struct MusicasPorPlataforma {
+    uint id;
+    uint idMusica;
+    uint contador;
+    address plataforma;
   }
 
   mapping (uint => Musica) public musicas;
+  mapping (uint => MusicasPorPlataforma) public musicasPorPlataforma; //armazenar quantidade de execução da musica por plataforma
+
   uint musicasCount;
+  uint musicasPlataformCount;
 
   //cadastrar música
   function cadastrarMusica(string _nomeMusica, uint256 _preco) public {
+    //Verifica se a musica já existe
+    require(!checkMusicExist(_nomeMusica));
+
     musicasCount++;
 
+    //Inicializa música e contador geral para ela
     musicas[musicasCount] = Musica(
       musicasCount,
       msg.sender,
-      0x0,
       _nomeMusica,
-      _preco
-      //0
+      _preco,
+      0
     );
+
   }
 
   //quantidade de músicas anunciadas
@@ -45,12 +58,24 @@ contract ExecutarMusica {
     return musicaIds;
   }
 
-  function getMusica(uint _id) public view returns (string, uint256) {
+  //verifica se a música já existe
+  function checkMusicExist(string musicaNome) public view returns (bool) {
+    bytes32 nome = keccak256(bytes(musicaNome));
+    for(uint i = 1; i <= musicasCount; i++){
+      string storage nomeAtual = musicas[i].nomeMusica;
+      bytes32 currentName = keccak256(bytes(nomeAtual));
+      if(nome == currentName)
+        return true;
+    }
+    return false;
+  }
+
+  function getMusica(uint _id) public view returns (string, uint256, uint) {
     //deve existir
     require(_id > 0 && _id <= musicasCount);
-    
+
     Musica storage musica = musicas[_id];
-    return (musica.nomeMusica, musica.preco);
+    return (musica.nomeMusica, musica.preco, musica.contador);
   }
 
   //tocar uma musica
@@ -69,10 +94,51 @@ contract ExecutarMusica {
     //valor enviado deve ser igual ao do valor anunciado
     require(msg.value == musica.preco);
 
-    //atualiza plataforma
-    musica.plataforma = msg.sender;
-
     //paga artista
     musica.artista.transfer(msg.value);
+
+    //incrementa o contador geral (independente da plataforma) para a música atual
+    uint execucoesMusicaAtual = musica.contador;
+    execucoesMusicaAtual++;
+    musica.contador = execucoesMusicaAtual;
+
+    //incrementa registro de músicas por plataforma
+    musicasPlataformCount++;
+
+	  //busca lista de músicas da plataforma atual
+    bool encontrouReg = false;
+    for(uint i = 1; i < musicasPlataformCount; i++){
+      if(musicasPorPlataforma[i].idMusica==_id && musicasPorPlataforma[i].plataforma==msg.sender){
+        uint contador = musicasPorPlataforma[i].contador;
+        contador++;
+        musicasPorPlataforma[i].contador = contador;
+        encontrouReg = true;
+        break;
+      }
+    }
+    //caso primeiro registro, inicializa
+    if(!encontrouReg){
+      musicasPorPlataforma[musicasPlataformCount] = MusicasPorPlataforma(
+        musicasPlataformCount,
+        _id,
+        1,
+        msg.sender
+      );
+    }
+  }
+
+  function getNumeroTocadasPorPlatatorma(uint _id, address plataforma) public view returns (uint){
+    //busca lista de músicas da plataforma atual
+    for(uint i = 1; i < musicasPlataformCount; i++){
+      if(musicasPorPlataforma[i].idMusica==_id && musicasPorPlataforma[i].plataforma==plataforma){
+        uint contador = musicasPorPlataforma[i].contador;
+        return(contador);
+      }
+    }
+    return(0);
+  }
+
+  function getNumeroVezesTocada(uint _id) public view returns (uint){
+    return(musicas[_id].contador);
   }
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <title>Cadastro</title>
+  <title>Múscicas | Cadastro</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
@@ -9,6 +9,7 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
   
   <script src="./node_modules/web3/dist/web3.js"></script>
+  <script src="./scripts.js"></script>
 </head>
 <body>
 
@@ -29,15 +30,20 @@
     <label for="preco">Preço:</label>
     <input type="number" class="form-control" id="preco">
   </div>
+  <div class="alert alert-dismissible" role="alert" id="divAlerta">
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		<span aria-hidden="true">&times;</span></button>
+	<span id="spanAlerta"></span>
+  </div>
   <button id="btnDisponibilizar" class="btn btn-primary">Disponibilizar</button>
-  <a href="/index_play.html" style="float: right;">
+  <a href="./index_play.html" style="float: right;">
 	Ir para a execução de músicas
   </a>
 </form>
 
 <hr/>
 
-<div id="musicas"></div>
+<div class="row" id="musicas"></div>
 
 </div>
 
@@ -48,137 +54,17 @@
 		//web3 = new Web3(web3.currentProvider);
 	//} else {
 		console.log('Usando Ganache');
-		web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+		web3 = new Web3(new Web3.providers.HttpProvider(ganacheUrl));
 	//}
 
 	//define conta padrão
 	web3.eth.defaultAccount = web3.eth.coinbase;
 
 	//ABI do contrato
-	var contractABI = web3.eth.contract([	
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "musicas",
-		"outputs": [
-			{
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"name": "artista",
-				"type": "address"
-			},
-			{
-				"name": "plataforma",
-				"type": "address"
-			},
-			{
-				"name": "nomeMusica",
-				"type": "string"
-			},
-			{
-				"name": "preco",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "getQuantidadeMusicas",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_nomeMusica",
-				"type": "string"
-			},
-			{
-				"name": "_preco",
-				"type": "uint256"
-			}
-		],
-		"name": "cadastrarMusica",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_id",
-				"type": "uint256"
-			}
-		],
-		"name": "tocaMusica",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},	
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_id",
-				"type": "uint256"
-			}
-		],
-		"name": "getMusica",
-		"outputs": [
-			{
-				"name": "",
-				"type": "string"
-			},
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "getMusicasDisponiveis",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256[]"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-]);
-
+	var contractABI = web3.eth.contract(contractArray);
 	//aponta para publicado
-	var contract = contractABI.at('0xf56a26fef6e3011fbdb26abe1c96858ed7e53aa4');
-
+	var contract = contractABI.at(contractAddress);
+	
 	//preenche carteiras do artista
 	var accounts = web3.eth.accounts;
 	var option = '';
@@ -198,32 +84,24 @@
 	$('#btnDisponibilizar').click(function(){
 		var nomeMusica = $('#musica').val();
 		var preco = $('#preco').val();
-		contract.cadastrarMusica(nomeMusica, web3.toWei(preco, "ether"), {from: $('#carteira').val(), gas: 3000000});
-	});
-
-	//mostrando as musicas disponíveis
-	contract.getMusicasDisponiveis(function(error, result){
-		if (!error) {
-			$.each(result, function(index, value) {
-	  			contract.getMusica(value, function(error, result){
-					if (!error) {
-						var card = '<div class="card">' + 
-						'  <div class="card-body">' + 
-						'    <h5 class="card-title">' + result[0] + '</h5>' + 
-						'    <h6 class="card-subtitle mb-2 text-muted">ETH ' + web3.fromWei(result[1], "ether") + '</h6>' + 
-						'  </div>' + 
-						'</div>';
-						$('#musicas').append(card);
-
-					} else {
-						console.log(error);
-					}
-				});
-			});
-		} else {
-			console.log(error);
+		if(preco==undefined || preco==0){
+			showError('Preço deve ser maior que 0');
+		} else{
+			try{
+				contract.cadastrarMusica(nomeMusica, web3.toWei(preco, "ether"), {from: $('#carteira').val(), gas: 3000000});
+				showSuccess('Música cadastrada com sucesso!');				
+			}catch(error){
+				console.log(error);
+				showError('Música já cadastrada ou erro no cadastro');
+			}
 		}
+		setTimeout(function(){
+            }, 3000);   
 	});
+
+	//busca dados das músicas cadastradas
+	handleMusicData();
+	$('#divAlerta').hide();
 
 </script>
 
