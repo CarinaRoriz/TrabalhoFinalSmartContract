@@ -22,7 +22,18 @@
   * O número de vezes que a música é tocada em cada plataforma é apresentada ao usuário.
   * Mensagens de erro e sucesso são apresentadas ao usuário.
   
-![Execução](./img/Execucao.png)
+![Execução](./img/execucao.png)  
+   
+**Ganache**  
+  
+Todas as transações, incluindo a relativa à criação do contrato, podem ser verificadas no Ganache:  
+  
+![Ganache](./img/ganache.png)
+  
+Assim como o valor em cada carteira, sendo que, por definição da solução, as 5 primeiras pertencem aos artistas e as 5 últimas às plataformas.
+
+![Ganache](./img/ganache_2.png)  
+  
 ## Pré-requisitos
 * [Node.js instalado](https://nodejs.org/en/download/)  
 * [Ganache em execução](https://www.trufflesuite.com/ganache)
