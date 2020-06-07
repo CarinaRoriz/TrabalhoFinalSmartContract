@@ -1,5 +1,5 @@
 var ganacheUrl = 'http://localhost:7545';
-var contractAddress = '0x393319310e7c33c39ae3119b73f10c4f5d8f7fab';
+var contractAddress = '0xfab875b654fcbf539a11515bbefcd196f07a87bf';
 var contractArray =    
     [
         {
@@ -251,6 +251,8 @@ var contractArray =
 function handleMusicData(){
     contract.getMusicasDisponiveis(function(error, result){
 		if (!error) {
+            if(result.length==0)
+                $('#musicas').html("Nenhuma música cadastrada");
 			$.each(result, function(index, value) {
 	  			contract.getMusica(value, function(error, result){					  
 					if (!error) {						
@@ -286,6 +288,8 @@ function getAvailableMusics() {//mostrando as musicas disponíveis
     contract.getMusicasDisponiveis(function(error, result){
         if (!error) {
             $('#musicas').html("");
+            if(result.length==0)
+                $('#musicas').html("Nenhuma música cadastrada");
             $.each(result, function(index, value) {
                 contract.getMusica(value, function(error, result){
                     if (!error) {
@@ -300,9 +304,9 @@ function getAvailableMusics() {//mostrando as musicas disponíveis
                                 `    <button type="button" class="btn btn-info" onclick="play(${value})">Tocar</button><br>`; 
                                 var qtdeTocada = tocada.toNumber();              
                                 if(qtdeTocada>0)
-                                    card+= `<span>Tocada ${qtdeTocada} vez${(qtdeTocada>1)?'es':''} na plataforma</span>`
+                                    card+= `<span>Tocada ${qtdeTocada} vez${(qtdeTocada>1)?'es':''} na plataforma selecionada</span>`
                                 else
-                                    card+= '<span>Ainda não tocada na plataforma</span>'
+                                    card+= '<span>Ainda não tocada na plataforma selecionada</span>'
                                 '</div></div></div>';
                                 $('#musicas').append(card);       
                         });

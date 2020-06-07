@@ -26,7 +26,7 @@ contract ExecutarMusica {
   mapping (uint => MusicasPorPlataforma) public musicasPorPlataforma; //armazenar quantidade de execução da musica por plataforma
   mapping (address => Artista) public idArtistaList;
 
-  uint artistaCount;
+  uint artistasCount;
   uint musicasCount;
   uint musicasPlataformCount;
 
@@ -46,7 +46,6 @@ contract ExecutarMusica {
       _preco,
       0
     );
-
   }
 
   //quantidade de músicas anunciadas
@@ -60,11 +59,11 @@ contract ExecutarMusica {
     {
       return(idArtistaList[artista].id);
     } else {
-      artistaCount++;
+      artistasCount++;
       idArtistaList[artista] = Artista(
-        artistaCount
+        artistasCount
       );
-      return(artistaCount);
+      return(artistasCount);
     }
   }
 
@@ -124,12 +123,9 @@ contract ExecutarMusica {
     execucoesMusicaAtual++;
     musica.contador = execucoesMusicaAtual;
 
-    //incrementa registro de músicas por plataforma
-    musicasPlataformCount++;
-
 	  //busca lista de músicas da plataforma atual
     bool encontrouReg = false;
-    for(uint i = 1; i < musicasPlataformCount; i++){
+    for(uint i = 0; i < musicasPlataformCount; i++){
       if(musicasPorPlataforma[i].idMusica==_id && musicasPorPlataforma[i].plataforma==msg.sender){
         uint contador = musicasPorPlataforma[i].contador;
         contador++;
@@ -140,6 +136,7 @@ contract ExecutarMusica {
     }
     //caso primeiro registro, inicializa
     if(!encontrouReg){
+      musicasPlataformCount++;
       musicasPorPlataforma[musicasPlataformCount] = MusicasPorPlataforma(
         musicasPlataformCount,
         _id,
@@ -151,7 +148,7 @@ contract ExecutarMusica {
 
   function getNumeroTocadasPorPlatatorma(uint _id, address plataforma) public view returns (uint){
     //busca lista de músicas da plataforma atual
-    for(uint i = 1; i < musicasPlataformCount; i++){
+    for(uint i = 0; i <= musicasPlataformCount; i++){
       if(musicasPorPlataforma[i].idMusica==_id && musicasPorPlataforma[i].plataforma==plataforma){
         uint contador = musicasPorPlataforma[i].contador;
         return(contador);
