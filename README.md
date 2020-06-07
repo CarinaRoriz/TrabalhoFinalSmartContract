@@ -22,7 +22,7 @@
   * O número de vezes que a música é tocada em cada plataforma é apresentada ao usuário.
   * Mensagens de erro e sucesso são apresentadas ao usuário.
   
-![Execução](./img/execucao.png)  
+![Execução](./img/Execucao.png)  
    
 **Ganache**  
   
