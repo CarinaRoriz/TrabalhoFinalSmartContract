@@ -60,6 +60,6 @@ executarMusicaDeployed = executarMusicaContract.new({data:byteCode, from:web3.et
 executarMusicaInstance =  executarMusicaContract.at(executarMusicaDeployed.address)  
 executarMusicaDeployed.address  
 
-**Atualizar o arquivo [script.js](./script.js)**  
+**Atualizar o arquivo [scripts.js](./scripts.js)**  
   
 >Deve-se atualizar o valor da variável "ganacheUrl", caso a URL do servidor RPC do Ganache seja diferente do padrão e, obtendo-se sucesso na execução dos comandos acima, o valor da variável "contractAddress" deve ser atualizado com o endereço que aparece como resultado do último comando.
