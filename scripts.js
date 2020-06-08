@@ -1,5 +1,5 @@
 var ganacheUrl = 'http://localhost:7545';
-var contractAddress = '0xfab875b654fcbf539a11515bbefcd196f07a87bf';
+var contractAddress = '0xa79225ae1d6bb6f6aba062d146c312df3e786c80';
 var contractArray =    
     [
         {
@@ -261,7 +261,7 @@ function handleMusicData(){
                         '   <div class="card-body">' + 
                         `    <h5 class="card-title">${result[0]}</h5>` + 
                         `    <h6 class="card-subtitle mb-2 text-muted">ETH ${web3.fromWei(result[1], "ether")}</h6>` +
-                        `    <h6 class="card-subtitle mb-2 text-muted">Artista: #${result[3]}</h6>`; 
+                        `    <h6 class="card-subtitle mb-2 text-muted">Código Artista: #${result[3]}</h6>`; 
                         
                             if(result[2]>0)
                                 card+= `<span>Tocada ${result[2]} vez${(result[2]>1)?'es':''}</span>`
@@ -300,7 +300,7 @@ function getAvailableMusics() {//mostrando as musicas disponíveis
                                 '  <div class="card-body">' + 
                                 `    <h5 class="card-title">${result[0]}</h5>` + 
                                 `    <h6 class="card-subtitle mb-2 text-muted">ETH ${web3.fromWei(result[1], "ether")}</h6>` + 
-                                `    <h6 class="card-subtitle mb-2 text-muted">Artista: #${result[3]}</h6>` +
+                                `    <h6 class="card-subtitle mb-2 text-muted">Código Artista: #${result[3]}</h6>` +
                                 `    <button type="button" class="btn btn-info" onclick="play(${value})">Tocar</button><br>`; 
                                 var qtdeTocada = tocada.toNumber();              
                                 if(qtdeTocada>0)
